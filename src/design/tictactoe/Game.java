@@ -60,10 +60,18 @@ public class Game {
     public void undo(){
 
     }
+    public void makeNextMove() {
+
+    }
+
+    public void displayBoard() {
+
+    }
 
     public static GameBuilder getBuilder(){
         return new GameBuilder();
     }
+
     static class GameBuilder{
         private int dimension;
         private List<Player> players;

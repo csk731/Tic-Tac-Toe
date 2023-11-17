@@ -4,6 +4,8 @@ import design.tictactoe.board.cells.Cell;
 import design.tictactoe.players.Player;
 
 public class Move {
+    private Cell cell;
+    private Player player;
     public Cell getCell() {
         return cell;
     }
@@ -20,6 +22,8 @@ public class Move {
         this.player = player;
     }
 
-    private Cell cell;
-    private Player player;
+    public Move(Cell cell, Player player) {
+        this.cell = cell;
+        this.player = player;
+    }
 }
