@@ -11,10 +11,38 @@ import java.util.ArrayList;
 import java.util.List;
 public class Game {
     private List<Player> players;
+    private int nextPlayerIndex;
     private Board board;
     private List<Move> moves;
     private GameStatus gameStatus;
-    private int nextPlayerIndex;
+    int cellOccupancyCount;
+
+    private GameWinningStrategy gameWinningStrategy;
+    public void announceResult(Player player){
+        System.out.println("The Game has ended.");
+        if(gameStatus.equals(GameStatus.ENDED)){
+            System.out.println("Result: WOO..!, THE WINNER IS: "+player.getName());
+        }
+        else if(gameStatus.equals(GameStatus.DRAW)){
+            System.out.println("Result: OOPS..!, IT'S A DRAW");
+        }
+    }
+
+    public int getCellOccupancyCount() {
+        return cellOccupancyCount;
+    }
+
+    public void setCellOccupancyCount(int cellOccupancyCount) {
+        this.cellOccupancyCount = cellOccupancyCount;
+    }
+
+    public GameWinningStrategy getGameWinningStrategy() {
+        return gameWinningStrategy;
+    }
+
+    public void setGameWinningStrategy(GameWinningStrategyType gameWinningStrategyType) {
+        this.gameWinningStrategy = GameWinningStrategyFactory.getGameWinningStrategy(gameWinningStrategyType,board.getBoard().length);
+    }
 
     private Game(){
 
@@ -62,6 +90,9 @@ public class Game {
     public void undo(){
 
     }
+    private boolean checkDraw(){
+        return cellOccupancyCount==2*board.getBoard().length;
+    }
     public void makeNextMove() {
         Player toMovePlayer=players.get(nextPlayerIndex);
         Move move=toMovePlayer.decideMove(board);
@@ -71,14 +102,24 @@ public class Game {
         int row=move.getCell().getRow();
         int col=move.getCell().getColumn();
 
-        System.out.println("Move happened at: "+ row +", "+ col);
-
         board.getBoard()[row][col].setCellStatus(CellStatus.FILLED);
         board.getBoard()[row][col].setPlayer(toMovePlayer);
 
         Move finalMove=new Move(board.getBoard()[row][col],toMovePlayer);
 
         this.moves.add(finalMove);
+
+        System.out.println("*** Move happened at: "+ row +", "+ col + " ***");
+
+        cellOccupancyCount++;
+
+        if(gameWinningStrategy.checkWinner(board,finalMove.getCell())){
+            this.setGameStatus(GameStatus.ENDED);
+            this.announceResult(toMovePlayer);
+        }
+        if(checkDraw()){
+            this.setGameStatus(GameStatus.DRAW);
+        }
 
         nextPlayerIndex = (nextPlayerIndex+1) % players.size();
 
@@ -143,7 +184,8 @@ public class Game {
             game.setMoves(new ArrayList<Move>());
             game.setBoard(new Board(dimension));
             game.setNextPlayerIndex(0);
-
+            game.setGameWinningStrategy(GameWinningStrategyType.ROW);
+            game.setCellOccupancyCount(0);
             return game;
         }
     }

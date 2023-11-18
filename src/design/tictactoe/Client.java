@@ -81,9 +81,6 @@ public class Client {
             }
 
         }
-        System.out.println("The Game has ended. Result: ");
-        if(game.getGameStatus().equals(GameStatus.DRAW)){
-            System.out.println("Winner is: ");
-        }
+
     }
 }
