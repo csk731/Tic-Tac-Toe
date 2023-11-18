@@ -1,6 +1,8 @@
 package design.tictactoe;
 
 import design.tictactoe.board.Board;
+import design.tictactoe.board.cells.Cell;
+import design.tictactoe.board.cells.CellStatus;
 import design.tictactoe.exceptions.InvalidGameConstructionParameterException;
 import design.tictactoe.moves.Move;
 import design.tictactoe.players.Player;
@@ -61,11 +63,39 @@ public class Game {
 
     }
     public void makeNextMove() {
+        Player toMovePlayer=players.get(nextPlayerIndex);
+        Move move=toMovePlayer.decideMove(board);
+
+        //Validate Move
+
+        int row=move.getCell().getRow();
+        int col=move.getCell().getColumn();
+
+        System.out.println("Move happened at: "+ row +", "+ col);
+
+        board.getBoard()[row][col].setCellStatus(CellStatus.FILLED);
+        board.getBoard()[row][col].setPlayer(toMovePlayer);
+
+        Move finalMove=new Move(board.getBoard()[row][col],toMovePlayer);
+
+        this.moves.add(finalMove);
+
+        nextPlayerIndex = (nextPlayerIndex+1) % players.size();
 
     }
 
     public void displayBoard() {
-
+        int size=board.getBoard().length;
+        for(int i=0;i<size;++i){
+            for(int j=0;j<size;++j){
+                Cell cell=board.getBoard()[i][j];
+                if(j==0) System.out.print("|");
+                if(cell.getCellStatus().equals(CellStatus.FILLED)) System.out.print(cell.getPlayer().getaChar());
+                else System.out.print(" ");
+                System.out.print("|");
+            }
+            System.out.print("\n");
+        }
     }
 
     public static GameBuilder getBuilder(){
@@ -112,7 +142,7 @@ public class Game {
             game.setPlayers(players);
             game.setMoves(new ArrayList<Move>());
             game.setBoard(new Board(dimension));
-            game.setNextPlayerIndex(-1);
+            game.setNextPlayerIndex(0);
 
             return game;
         }
