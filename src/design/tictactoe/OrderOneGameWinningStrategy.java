@@ -2,8 +2,6 @@ package design.tictactoe;
 
 import design.tictactoe.board.Board;
 import design.tictactoe.board.cells.Cell;
-import design.tictactoe.players.Player;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,18 +64,35 @@ public class OrderOneGameWinningStrategy implements GameWinningStrategy{
             }
         }
 
-        if((rowSymbolCounts.get(row).get(playerSymbol)==dimension ||
-                   columnSymbolCounts.get(col).get(playerSymbol)==dimension)){
-            return true;
-        }
-        if(isCellOnTopRightDiagonal(row,col,dimension-1) && topRightDiagonalSymbolCounts.get(playerSymbol)==dimension){
+        if((rowSymbolCounts.get(row).get(playerSymbol)==dimension || columnSymbolCounts.get(col).get(playerSymbol)==dimension)){
             return true;
         }
         if(isCellOnTopLeftDiagonal(row,col) && topLeftDiagonalSymbolCounts.get(playerSymbol)==dimension){
             return true;
         }
+        if(isCellOnTopRightDiagonal(row,col,dimension-1) && topRightDiagonalSymbolCounts.get(playerSymbol)==dimension){
+            return true;
+        }
         return false;
     }
 
+    public void undoMove(int row, int col, char symbol){
+        HashMap<Character, Integer> rowMap = rowSymbolCounts.get(row);
+        rowMap.put(symbol,rowMap.get(symbol)-1);
+        if(rowMap.get(symbol)==0) rowMap.remove(symbol);
+
+        HashMap<Character, Integer> colMap = columnSymbolCounts.get(col);
+        colMap.put(symbol,colMap.get(symbol)-1);
+        if(colMap.get(symbol)==0) colMap.remove(symbol);
+
+        if(isCellOnTopLeftDiagonal(row,col)){
+            topLeftDiagonalSymbolCounts.put(symbol,topLeftDiagonalSymbolCounts.get(symbol)-1);
+            if(topLeftDiagonalSymbolCounts.get(symbol)==0) topLeftDiagonalSymbolCounts.remove(symbol);
+        }
+        if(isCellOnTopRightDiagonal(row,col,dimension-1)){
+            topRightDiagonalSymbolCounts.put(symbol,topRightDiagonalSymbolCounts.get(symbol)-1);
+            if(topRightDiagonalSymbolCounts.get(symbol)==0) topRightDiagonalSymbolCounts.remove(symbol);
+        }
+    }
 
 }

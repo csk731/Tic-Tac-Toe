@@ -3,7 +3,6 @@ package design.tictactoe.players;
 import design.tictactoe.board.Board;
 import design.tictactoe.board.cells.Cell;
 import design.tictactoe.moves.Move;
-import design.tictactoe.symbols.Symbol;
 
 import java.util.Scanner;
 
@@ -51,7 +50,7 @@ public class Player {
         int row=scanner.nextInt();
         System.out.println("Enter the column number, starting from 0:");
         int column=scanner.nextInt();
-        return new Move(new Cell(row,column),this);
+        return new Move(new Cell(row,column));
 
     }
 }

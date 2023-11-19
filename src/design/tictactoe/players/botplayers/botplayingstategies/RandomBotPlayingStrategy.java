@@ -13,7 +13,7 @@ public class RandomBotPlayingStrategy implements BotPlayingStrategy{
         for(int i=0;i<size;++i){
             for (int j=0;j<size;j++){
                 if(board.getBoard()[i][j].getCellStatus().equals(CellStatus.EMPTY)){
-                    return new Move(new Cell(i,j),player);
+                    return new Move(new Cell(i,j));
                 }
             }
         }

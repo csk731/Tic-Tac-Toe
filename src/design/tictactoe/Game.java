@@ -16,7 +16,6 @@ public class Game {
     private List<Move> moves;
     private GameStatus gameStatus;
     int cellOccupancyCount;
-
     private GameWinningStrategy gameWinningStrategy;
     public void announceResult(Player player){
         System.out.println("The Game has ended.");
@@ -86,12 +85,30 @@ public class Game {
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
+    private boolean checkDraw(){
+        int dimension = board.getBoard().length;
+        return cellOccupancyCount==dimension*dimension;
+    }
 
     public void undo(){
+        int totalPlayers = players.size();
+        nextPlayerIndex = (nextPlayerIndex-1+totalPlayers)%totalPlayers;
 
-    }
-    private boolean checkDraw(){
-        return cellOccupancyCount==2*board.getBoard().length;
+        Move moveMade=moves.get(moves.size()-1);
+        int row=moveMade.getCell().getRow();
+        int col=moveMade.getCell().getColumn();
+
+        gameWinningStrategy.undoMove(row,col,moveMade.getCell().getPlayer().getaChar());
+
+        cellOccupancyCount--;
+
+        board.getBoard()[row][col].setCellStatus(CellStatus.EMPTY);
+        board.getBoard()[row][col].setPlayer(null);
+
+        moves.remove(moves.size()-1);
+
+        System.out.println("*** Move removed at: "+ row +", "+ col + " ***");
+
     }
     public void makeNextMove() {
         Player toMovePlayer=players.get(nextPlayerIndex);
@@ -105,7 +122,7 @@ public class Game {
         board.getBoard()[row][col].setCellStatus(CellStatus.FILLED);
         board.getBoard()[row][col].setPlayer(toMovePlayer);
 
-        Move finalMove=new Move(board.getBoard()[row][col],toMovePlayer);
+        Move finalMove=new Move(board.getBoard()[row][col]);
 
         this.moves.add(finalMove);
 
